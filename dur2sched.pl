@@ -1,6 +1,6 @@
 # Input: A list of movie clip durations @ 25 fps, format [[HH:]MM:]SS:ff
 # Output: List of absolute offsets from beginning in same format.
-# $Id: /caches/xsvn/admdevel/trunk/prj/shared_bin_in_path_9wewpie7d5tawvtr9qf842c1z/dur2sched.pl 11 2006-11-06T23:14:31.537884Z root(xternal)  $
+# $Id: /trunk/Org/SysAdmin/Crossplatform/bin/dur2sched.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 
 
 use strict;
@@ -14,7 +14,7 @@ option -n: Assume input is [[HH]MM]NNSSFF instead of ':' separated items
 }
 
 
-our($VERSION)= q$Revision: 11 $ =~ /(\d+\.\d+)/;
+our($VERSION)= q$Revision: 2647 $ =~ /(\d+\.\d+)/;
 my($h, $m, $s, $f, $a, %opt);
 $Getopt::Std::STANDARD_HELP_VERSION= 1;
 die unless getopts('n', \%opt);

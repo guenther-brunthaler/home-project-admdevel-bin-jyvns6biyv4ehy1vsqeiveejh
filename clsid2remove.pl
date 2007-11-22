@@ -1,7 +1,7 @@
 # Process a registry script and change all
 # HKEY_CLASSES_ROOT\CLSID|Interface|TypeLib
 # sections into key-removal sections.
-# $Id: /caches/xsvn/admdevel/trunk/prj/shared_bin_in_path_9wewpie7d5tawvtr9qf842c1z/clsid2remove.pl 11 2006-11-06T23:14:31.537884Z root(xternal)  $
+# $Id: /trunk/Org/SysAdmin/Crossplatform/bin/clsid2remove.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 
 
 use strict;
@@ -11,7 +11,7 @@ use ReplacementFile_F467BD49_CBA4_11D5_9920_C23CC971FBD2;
 
 my(%opt, $tpl);
 $Getopt::Std::STANDARD_HELP_VERSION= 1;
-our($VERSION)= '$Revision: 11 $' =~ /(\d[\d.]*)/;
+our($VERSION)= '$Revision: 2647 $' =~ /(\d[\d.]*)/;
 unless (getopts('n', \%opt) && @ARGV > 0) {
    die
         "Usage: $0 [ <options> ] <file1>.reg ...\n"

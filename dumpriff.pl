@@ -1,5 +1,5 @@
 # Output the structure dump for a RIFF file.
-# $Id: /caches/xsvn/admdevel/trunk/prj/shared_bin_in_path_9wewpie7d5tawvtr9qf842c1z/dumpriff.pl 11 2006-11-06T23:14:31.537884Z root(xternal)  $
+# $Id: /trunk/Org/SysAdmin/Crossplatform/bin/dumpriff.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 
 
 use strict;
@@ -30,7 +30,7 @@ our $opt_ascii_dump_begin_indicator= '"';
 our $opt_ascii_dump_end_indicator= '"';
 
 
-my $version= '$Revision: 11 $ $Date: 2006-11-06T23:14:31.537884Z $';
+my $version= '$Revision: 2647 $ $Date: 2006-08-26T07:45:40.216781Z $';
 $version =~ s/
  .+? Revision: \s+ ([^\$\s]+)
  .+ Date: \s+ ([^\$]+?)

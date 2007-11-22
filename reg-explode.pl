@@ -3,7 +3,7 @@
 # Can also be used to convert back the exploded format into the
 # "hex:"-format.
 #
-# $Id: /caches/xsvn/admdevel/trunk/prj/shared_bin_in_path_9wewpie7d5tawvtr9qf842c1z/reg-explode.pl 11 2006-11-06T23:14:31.537884Z root(xternal)  $
+# $Id: /trunk/Org/SysAdmin/Crossplatform/bin/reg-explode.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 
 
 use strict;
@@ -41,5 +41,5 @@ Options:
 
 my(%opt);
 $Getopt::Std::STANDARD_HELP_VERSION= 1;
-our($VERSION)= '$Revision: 11 $' =~ /(\d[\d.]*)/;
+our($VERSION)= '$Revision: 2647 $' =~ /(\d[\d.]*)/;
 getopts('i', \%opt) or die;

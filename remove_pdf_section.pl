@@ -1,5 +1,5 @@
 # Removes a section of text from a PDF file.
-# $Id: /caches/xsvn/admdevel/trunk/prj/shared_bin_in_path_9wewpie7d5tawvtr9qf842c1z/remove_pdf_section.pl 11 2006-11-06T23:14:31.537884Z root(xternal)  $
+# $Id: /trunk/Org/SysAdmin/Crossplatform/bin/remove_pdf_section.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 
 # Lines that start the section (inclusive).
 my $from= <<'.';

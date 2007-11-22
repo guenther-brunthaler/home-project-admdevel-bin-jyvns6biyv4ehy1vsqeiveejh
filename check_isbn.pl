@@ -1,9 +1,9 @@
 # $xsa1={FBF02760-95CF-11D3-BD96-0040C72500FD}$
 # $Archive: /PRIVATE/GB/DATA/txt/Ansi/STRANDED.TXT $
-# $Author: root(xternal) $
+# $Author: gb $
 # $Modtime: 30.10.00 23:34 $ (DOLM)
-# $Date: 2006-11-06T23:14:31.537884Z $ (Updated)
-# $Revision: 11 $
+# $Date: 2006-08-26T07:45:40.216781Z $ (Updated)
+# $Revision: 2647 $
 # $Nokeywords:$
 # $xsa1$
 

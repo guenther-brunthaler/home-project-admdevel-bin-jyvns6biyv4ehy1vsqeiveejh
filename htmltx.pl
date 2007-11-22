@@ -1,8 +1,8 @@
 # $xsa1={FBF02760-95CF-11D3-BD96-0040C72500FD}$
 # $RCSfile$
-# $Revision: 11 $
-# $Date: 2006-11-06T23:14:31.537884Z $
-# $Author: root(xternal) $
+# $Revision: 2647 $
+# $Date: 2006-08-26T07:45:40.216781Z $
+# $Author: gb $
 # $State$
 # $xsa1$
 
@@ -191,7 +191,7 @@ sub extract_tables($$) {
 
 my($in, $out, %opt);
 $Getopt::Std::STANDARD_HELP_VERSION= 1;
-our($VERSION)= '$Revision: 11 $' =~ /(\d[\d.]*)/;
+our($VERSION)= '$Revision: 2647 $' =~ /(\d[\d.]*)/;
 getopts('uv', \%opt) or die;
 if ($#ARGV >= 0) {
    open IN, "<$ARGV[0]" or die "$Usage";

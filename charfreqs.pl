@@ -1,4 +1,4 @@
-# $Id: /caches/xsvn/admdevel/trunk/prj/shared_bin_in_path_9wewpie7d5tawvtr9qf842c1z/charfreqs.pl 11 2006-11-06T23:14:31.537884Z root(xternal)  $
+# $Id: /trunk/Org/SysAdmin/Crossplatform/bin/charfreqs.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 # Determine octet / character frequencies.
 open IN, '<', $ARGV[0] or die;
 binmode IN or die;
