@@ -1,0 +1,36 @@
+#! /usr/bin/perl -w
+# Assumes lines pasted from OE3 charts.
+# Format: [WS] Title WS Artist [WS]
+# Converts into: Artist - Title
+# where
+# WS: WS containing at least one \t.
+
+
+use strict;
+
+
+my $in= shift;
+die "Usage: $0 <infile>" if !$in || @ARGV || ! -f $in;
+open IN, '<', $in or die "Cannot open file '$in': $!";
+my $ws= qr/(?:\s*\t\s*)/;
+my $t= qr/(?:[^\t]*?)/;
+my($title, $artist, @f);
+while (defined($_= <IN>)) {
+   chomp;
+   if (($title, $artist)= /^$ws?($t)$ws($t)$ws?$/o) {
+      $artist =~ s/feat(?:uring)?\.?/Feat./i;
+      push @f, {title => $title, artist => $artist};
+   }
+}
+close IN or die $!;
+my $out= $in . ".out";
+open OUT, '>', $out or die "Cannot create file '$out': $!";
+foreach (
+   sort {
+         $a->{artist} cmp $b->{artist}
+      || $a->{title} cmp $b->{title}
+   } @f
+) {
+   print OUT "$_->{artist} - $_->{title}\n";
+}
+close OUT or die "Could not finish writing file '$out': $!";
