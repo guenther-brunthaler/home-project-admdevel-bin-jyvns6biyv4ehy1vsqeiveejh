@@ -31,6 +31,6 @@ foreach (
       || $a->{title} cmp $b->{title}
    } @f
 ) {
-   print OUT "$_->{artist} - $_->{title}\n";
+   print OUT "$_->{artist} - $_->{title}.mp3\n";
 }
 close OUT or die "Could not finish writing file '$out': $!";
