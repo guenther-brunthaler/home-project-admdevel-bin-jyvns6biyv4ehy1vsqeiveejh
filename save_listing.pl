@@ -112,7 +112,10 @@ my $root= shift || die;
 die "'$root' does not exist" unless -d $root || -b $root;
 unless ($label) {
    open MOUNT, '-|', "mount -l" or die $!;
-   my($mp, $dev);
+   my($mp, $dev, $rootcmp);
+   $rootcmp= qx(readlink -f "$root");
+   chomp $rootcmp;
+   die unless -d $rootcmp;
    foreach (<MOUNT>) {
       next unless /
          (.+?) [ ] on [ ] (.+?) [ ] type [ ] \S+
@@ -121,7 +124,7 @@ unless ($label) {
       $/x;
       ($dev, $mp, $label)= ($1, $2, $3);
       # Check for matching mount point first.
-      last if $mp eq $root;
+      last if $mp eq $rootcmp;
       # Otherwise, check for matching device.
       next unless $dev eq $root;
       ($in_vg, $label, $root)= (1, $dev, $mp);
@@ -165,6 +168,7 @@ if (File::Spec->file_name_is_absolute($listings_dir)) {
 $dir= File::Spec->catpath($vol, $dir, '');
 die "Listings directory '$dir' does not exist" unless -d $dir;
 if ($ann_mode) {
+   # Appends to .nfo files rather than creating .lst files.
    $file= File::Spec->catfile($dir, $label . ".nfo");
    print "Appending to annotation file '$file'...\n";
    open OUT, '>>', $file or die "Cannot create or append to '$file': $!";
