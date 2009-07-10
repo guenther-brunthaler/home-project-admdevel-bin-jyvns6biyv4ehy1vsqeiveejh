@@ -72,7 +72,10 @@ sub emit_dir {
       print $fh dolm($mtime), sprintf('%13s', $size), ' ', $rf, "\n";
       return;
    }
-   opendir DIR, $ad or die "Cannot read '$ad': $!";
+   unless (opendir DIR, $ad) {
+      return if $dir eq 'lost+found';
+      die "Cannot read '$ad': $!";
+   }
    while (defined($e= readdir DIR)) {
       next unless File::Spec->no_upwards($e);
       push @e, $e;
