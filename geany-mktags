@@ -8,7 +8,7 @@
 -- This script gets its information from parsing the Geany configuration
 -- files as well as reading the directory tree searching for matching
 -- source files. It also sets up CFLAGS automatically to include all
--- directories containing #include files in sorted depth-first order.
+-- directories containing #include files in sorted breadth-first order.
 --
 -- (c) 2010 by Guenther Brunthaler.
 --
@@ -167,23 +167,28 @@ do
       end
    end
    
-   local function depth_first(node, prefix)
+   local function breadth_first(node, prefix)
       local nn= {}
       for k in pairs(node) do table.insert(nn, k) end
       table.sort(nn)
-      for _, n in ipairs(nn) do
-         table.insert(prefix, n)
-         nn= node[n]
-         if next(nn) then
-            depth_first(nn, prefix)
+      for pass= 1, 2 do
+         for _, n in ipairs(nn) do
+            table.insert(prefix, n)
+            if pass == 1 then
+               table.insert(idirs, table.concat(prefix, "/"))
+            else
+               nn= node[n] -- This is the last pass!
+               if next(nn) then
+                  breadth_first(nn, prefix)
+               end
+            end
+            table.remove(prefix)
          end
-         table.insert(idirs, table.concat(prefix, "/"))
-         table.remove(prefix)
       end
    end
    
    idirs= {}
-   depth_first(tree, {})
+   breadth_first(tree, {})
    do
       local vs
       for k, v in pairs(idirs) do
