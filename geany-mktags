@@ -1,4 +1,19 @@
 #! /usr/bin/env lua
+-- Generate loadable tag files for Geany.
+--
+-- This script runs "geany -g" with the correct parameters to generate
+-- tag files for all supported languages for the source files in the
+-- current directory tree.
+--
+-- This script gets its information from parsing the Geany configuration
+-- files as well as reading the directory tree searching for matching
+-- source files. It also sets up CFLAGS automatically to include all
+-- directories containing #include files in sorted depth-first order.
+--
+-- (c) 2010 by Guenther Brunthaler.
+--
+-- This script is free software.
+-- Distribution is permitted under the terms of the GPLv3.
 
 
 local old_globals= {}; for k in pairs(_G) do old_globals[k]= true; end
@@ -202,7 +217,7 @@ do
          tagfile= string.format("name.%s.tags", ldsc.sym)
          print(
             string.format(
-                  'Generating tag file "%s" for language "%s".'
+                  'Trying to generate tag file "%s" for language "%s".'
                ,  tagfile, ldsc.name
             )
          )
@@ -214,7 +229,6 @@ do
             table.insert(ts, file)
          end
          cmd= table.concat(ts, " ")
-         print(cmd)
          assert(os.execute(cmd))
       end
    end
