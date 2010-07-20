@@ -196,12 +196,7 @@ do
    end
    table.sort(ts, cmp_lang_names)
 
-   local tagfile, cmd, cwd
-   do
-      local output= assert(io.popen("pwd"))
-      cwd= assert(output:read())
-      assert(output:close())
-   end
+   local tagfile, cmd 
    for _, ldsc in ipairs(ts) do
       if next(ldsc.files) then
          tagfile= string.format("name.%s.tags", ldsc.sym)
@@ -213,7 +208,6 @@ do
          )
          ts= {string.format("CFLAGS=%s", CFLAGS), "geany", "-g", tagfile}
          for _, file in ipairs(ldsc.files) do
-            file= string.format("%s/%s", cwd, file)
             if string.match(file, "[%s\"'\\]") then
                file= string.format("%q", file)
             end
