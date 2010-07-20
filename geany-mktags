@@ -1,0 +1,228 @@
+#! /usr/bin/env lua
+
+
+local old_globals= {}; for k in pairs(_G) do old_globals[k]= true; end
+
+
+local base= "/usr/share/geany"
+local includes_xtns= "h H hxx h++ hpp inl"
+
+
+-- langs[LANGSYM].name == LANGUAGE.
+-- langs[LANGSYM].files[INDEX] == RELATIVE_FILENAME.
+local langs= {}
+local globs= {} -- globs[PATTERN][LANGSYM] == true.
+local directs= {} -- directs[STRING][LANGSYM] == true.
+
+
+local function add_config(filename)
+   local section, s, lang, pats, mode, sym, tbl
+   for line in io.lines(filename) do
+      line= string.match(line, "^%s*(.-)%s*$")
+      if line ~= "" and not string.match(line, "^#") then
+         s= string.match(line, "^%[([^%]]+)%]$")
+         if s then
+            section= s
+         elseif section == "Extensions" then
+            lang, pats= string.match(line, "^([^=]+)%s*=%s*(.-;)$")
+            if lang then
+               sym= string.lower(lang)
+               if not langs[sym] then langs[sym]= {files= {}, name= lang}; end
+               for xpat in string.gmatch(pats, "%s*([^;]-)%s*;") do
+                  s= string.match(xpat, "^%*([^*]*)$")
+                  if s then
+                     if s == "" then
+                        mode= false
+                     else
+                        xpat= s
+                        mode= "suffix"
+                     end
+                  else
+                     s= string.match(xpat, "^([^*]+)%*$")
+                     if s then
+                        xpat= s
+                        mode= "prefix"
+                     else
+                        mode=
+                           string.match(xpat, "%*") and "complex" or "whole"
+                     end
+                  end
+                  if mode then
+                     if mode == "whole" then
+                        tbl= directs
+                     else
+                        tbl= globs
+                        xpat= string.gsub(xpat, "([-[%]^(%).*+?$])", "%%%1")
+                        if mode == "prefix" then
+                           xpat= "^" .. xpat
+                        elseif mode == "suffix" then
+                           xpat= xpat .. "$"
+                        else
+                           assert(mode == "complex")
+                           xpat= "^" .. string.gsub(xpat, "%%%*", ".*") .. "$"
+                        end
+                     end
+                     if not tbl[xpat] then
+                        tbl[xpat]= {}
+                     end
+                     tbl[xpat][sym]= true
+                  end
+               end
+            else
+               io.stderr:write(
+                  string.format('Could not parse line "%s"!\n', line)
+               )
+            end
+         end
+      end
+   end
+end
+
+
+add_config(base .. "/filetype_extensions.conf")
+--[[
+   do
+      local o
+      for _, t in
+         ipairs{{n= "directs", t= directs}, {n= "globs", t= globs}}
+      do
+         o= {}
+         for k in pairs(t.t) do
+            table.insert(o, k)
+         end
+         table.sort(o)
+         for _, k in ipairs(o) do
+            o= {}
+            for k in pairs(t.t[k]) do
+               table.insert(o, string.format("%q", langs[k].name))
+            end
+            table.sort(o)
+            print(
+               string.format('%s["%s"] = %s', t.n, k, table.concat(o, ", "))
+            )
+         end
+      end
+   end
+--]]
+local CFLAGS
+do
+   local idirs= {}
+   do
+      local xtns= {}
+      for xtn in string.gmatch(includes_xtns, "%S+") do xtns[xtn]= true; end
+
+      local m, bn, xt, rfile
+      local dir= "find -name '.?*' -type d -prune -o -type f -print"
+      dir= assert(io.popen(dir))
+      for file in dir:lines() do
+         rfile= assert(string.gsub(file, "^%./(.+)$", "%1"))
+         bn= string.match(rfile, "[^/]+$")
+         xt= string.match(bn, "[^.]*$")
+         if xtns[xt] then
+            idirs[assert(string.match(file, "(.*)/[^/]*$"))]= true
+         end
+         m= directs[bn]
+         if m then
+            for k in pairs(m) do table.insert(langs[k].files, rfile) end
+         end
+         for pat, plss in pairs(globs) do
+            if string.match(bn, pat) then
+               for k in pairs(plss) do table.insert(langs[k].files, rfile) end
+            end
+         end
+      end
+      assert(dir:close())
+   end
+   
+   local tree= {}
+   do
+      local base, subpath, current_tree, subtree
+      for path in pairs(idirs) do
+         current_tree= tree
+         repeat
+            base, subpath= string.match(path, "^([^/]+)/(.+)")
+            if not base then base= path; end
+            subtree= current_tree[base]
+            if not subtree then
+               subtree= {}
+               current_tree[base]= subtree
+            end
+            path, current_tree= subpath, subtree
+         until not subpath
+      end
+   end
+   
+   local function depth_first(node, prefix)
+      local nn= {}
+      for k in pairs(node) do table.insert(nn, k) end
+      table.sort(nn)
+      for _, n in ipairs(nn) do
+         table.insert(prefix, n)
+         nn= node[n]
+         if next(nn) then
+            depth_first(nn, prefix)
+         end
+         table.insert(idirs, table.concat(prefix, "/"))
+         table.remove(prefix)
+      end
+   end
+   
+   idirs= {}
+   depth_first(tree, {})
+   do
+      local vs
+      for k, v in pairs(idirs) do
+         vs= string.gsub(v, "^%./(.*)", "%1")
+         if vs then v= vs; end
+         idirs[k]= string.format(
+               string.format(
+                     "-I%s"
+                  ,  string.match(v, "[%s\"'\\]") and "%q" or "%s"
+               )
+            ,  v
+         )
+      end
+   end
+   CFLAGS= string.format("%q", table.concat(idirs, " "))
+end
+do
+   local function cmp_lang_names(e1, e2)
+      return e1.name < e2.name
+   end
+
+   local ts= {}
+   for k, v in pairs(langs) do
+      table.insert(ts, {sym= k, name= v.name, files= v.files})
+   end
+   table.sort(ts, cmp_lang_names)
+
+   local tagfile, cmd, cwd
+   do
+      local output= assert(io.popen("pwd"))
+      cwd= assert(output:read())
+      assert(output:close())
+   end
+   for _, ldsc in ipairs(ts) do
+      if next(ldsc.files) then
+         tagfile= string.format("name.%s.tags", ldsc.sym)
+         print(
+            string.format(
+                  'Generating tag file "%s" for language "%s".'
+               ,  tagfile, ldsc.name
+            )
+         )
+         ts= {string.format("CFLAGS=%s", CFLAGS), "geany", "-g", tagfile}
+         for _, file in ipairs(ldsc.files) do
+            file= string.format("%s/%s", cwd, file)
+            if string.match(file, "[%s\"'\\]") then
+               file= string.format("%q", file)
+            end
+            table.insert(ts, file)
+         end
+         cmd= table.concat(ts, " ")
+         print(cmd)
+         assert(os.execute(cmd))
+      end
+   end
+end
+for k in pairs(_G) do assert(old_globals[k], "created global " .. k) end
