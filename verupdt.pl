@@ -30,7 +30,7 @@ while ($fn= <>) {
   $xsa= new Lib::XSA;
   $xsa->set(
    -filter => ['1={FBF02760-95CF-11D3-BD96-0040C72500FD}', ''],
-   -in => *ORIG{FILEHANDLE}
+   -in => *ORIG{IO}
   );
   undef $st;
   for ($i= $analyze_max; $xsa->read; ) {
@@ -62,7 +62,7 @@ while ($fn= <>) {
    $xsa= new Lib::XSA;
    $xsa->set(
     -filter => ['1={FBF02760-95CF-11D3-BD96-0040C72500FD}', ''],
-    -in => *BAK{FILEHANDLE}, -out => *ORIG{FILEHANDLE}
+    -in => *BAK{IO}, -out => *ORIG{IO}
    );
    $prefix= '';
    OUTER: while ($xsa->read) {

@@ -142,7 +142,7 @@ sub FetchDetails {
  $xsa= new Lib::XSA;
  open IN, '<', $filename or croak qq<cannot open file "$filename" for reading>;
  $xsa->set(
-  -in => *IN{FILEHANDLE},
+  -in => *IN{IO},
   -filter => [
    '{8530E5A0-F2CD-11D4-97BF-0050BACC8FE1}',
    'title=',

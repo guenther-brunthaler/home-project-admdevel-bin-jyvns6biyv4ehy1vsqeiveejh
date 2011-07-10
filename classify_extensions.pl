@@ -61,7 +61,7 @@ while (<>) {
  chomp;
  if (open IN, '<', $_) {
   binmode IN or die;
-  if (is_text(*IN{FILEHANDLE})) {
+  if (is_text(*IN{IO})) {
    $c= 'T';
   }
   elsif (-s $_ <= $binary_rejection_threshold) {

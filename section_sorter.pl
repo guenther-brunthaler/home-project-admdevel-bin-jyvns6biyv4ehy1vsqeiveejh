@@ -74,7 +74,7 @@ sub create {
    while -e $tf;
    if (open TMP, '+>', $tf) {
     $self->{filename}= $tf;
-    return $self->{fh}= *TMP{FILEHANDLE};
+    return $self->{fh}= *TMP{IO};
    }
   }
  }
@@ -103,7 +103,7 @@ $t= <$t>;
 print "fn '$t'\n";
 #open IN, '<', $ARGV[0] or die "Cannot create input file '$ARGV[0]'!";
 #open OUT, '>', $ARGV[1] or die "Cannot create output file '$ARGV[1]'!";
-#Process($ARGV[0], *IN{FILEHANDLE}, *OUT{FILEHANDLE});
+#Process($ARGV[0], *IN{IO}, *OUT{IO});
 #close OUT or die;
 #close IN or die;
 

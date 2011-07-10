@@ -109,7 +109,7 @@ sub contents {
    my $md5= new Digest::MD5;
    local *FH;
    open FH, '<', $fn or die "Cannot open '$fn': $^E";
-   $md5->addfile(*FH{FILEHANDLE});
+   $md5->addfile(*FH{IO});
    close FH or die $^E;
    #$md5->hexdigest;
    $md5->digest;

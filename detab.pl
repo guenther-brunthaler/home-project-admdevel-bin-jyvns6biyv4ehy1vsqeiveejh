@@ -41,7 +41,7 @@ sub log {
    my($msg, $force)= @_;
    my($fh);
    return unless $verbose || $force;
-   $fh= $filter ? *STDERR{FILEHANDLE} : *STDOUT{FILEHANDLE};
+   $fh= $filter ? *STDERR{IO} : *STDOUT{IO};
    print $fh $msg;
 }
 
@@ -81,7 +81,7 @@ exit unless GetOptions(
 my $files= 0;
 if ($filter) {
    &log("Filtering from standard input to standard output...\n");
-   expand_tabs(*STDIN{FILEHANDLE}, *STDOUT{FILEHANDLE});
+   expand_tabs(*STDIN{IO}, *STDOUT{IO});
    $files= 1;
 }
 else {
@@ -101,7 +101,7 @@ else {
       }
       open OUT, '>', $tmpname or die;
       eval {
-         $any= expand_tabs(*IN{FILEHANDLE}, *OUT{FILEHANDLE});
+         $any= expand_tabs(*IN{IO}, *OUT{IO});
       };
       $err= !!$@;
       close OUT or die;
