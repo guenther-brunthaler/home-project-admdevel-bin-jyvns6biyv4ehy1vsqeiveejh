@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Generates a REGEDIT version 4 '.reg'-File from a given text file
 # containing a list of registry key subtrees.
 #

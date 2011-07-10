@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Extracts ".mpv" MPEG-2 file for use in DVD2AVI from
 # the extracted contents of a Video CD RIFF "data" chunk.
 #

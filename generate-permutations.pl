@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Permutation generator.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/generate-permutations.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

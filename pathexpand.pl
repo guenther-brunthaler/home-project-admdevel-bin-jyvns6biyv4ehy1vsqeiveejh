@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Compresses or expands local paths using environment variables.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/pathexpand.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Removes a section of text from a PDF file.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/remove_pdf_section.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

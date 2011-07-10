@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Converts file names between local time and UTC format
 # and optionally adds a specified hour/minute/second time offset.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/zuluconv.pl 2647 2006-08-26T07:45:40.216781Z gb  $

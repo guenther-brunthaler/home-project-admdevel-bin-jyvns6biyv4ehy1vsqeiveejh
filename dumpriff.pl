@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Output the structure dump for a RIFF file.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/dumpriff.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

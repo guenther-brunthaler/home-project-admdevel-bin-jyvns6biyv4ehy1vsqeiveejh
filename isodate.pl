@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/isodate.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 # Changes lines starting with day/month/y2(y4) into yyyy-mm-dd.
 # Args: filename, 4-digit-year

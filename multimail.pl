@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/multimail.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 # Send a number of files by e-mail using multiple separate mail sessions.
 

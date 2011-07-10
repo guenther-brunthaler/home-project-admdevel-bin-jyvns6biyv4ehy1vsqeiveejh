@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Apply ROT-13 transformation to text.
 # Written by Guenther Brunthaler.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/rot13.pl 2647 2006-08-26T07:45:40.216781Z gb  $

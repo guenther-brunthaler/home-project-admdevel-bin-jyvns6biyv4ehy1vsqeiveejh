@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/c64listcnv.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 # Converts C-64 BASIC listing files into PC text files.
 $c= <<'END';

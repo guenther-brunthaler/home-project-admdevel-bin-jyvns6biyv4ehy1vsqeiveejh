@@ -1,3 +1,4 @@
+#! /usr/bin/perl -w
 # $xsa1={FBF02760-95CF-11D3-BD96-0040C72500FD}$
 # $RCSfile$
 # $Revision: 2647 $

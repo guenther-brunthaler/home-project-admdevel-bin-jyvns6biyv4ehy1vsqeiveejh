@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Process a registry script and change all
 # HKEY_CLASSES_ROOT\CLSID|Interface|TypeLib
 # sections into key-removal sections.

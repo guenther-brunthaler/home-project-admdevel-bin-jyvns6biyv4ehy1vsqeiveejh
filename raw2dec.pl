@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Interprets an octet stream from a file as a base-256 number
 # end outputs it in decimal.
 

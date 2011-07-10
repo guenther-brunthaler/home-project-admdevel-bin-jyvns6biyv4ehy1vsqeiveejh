@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Create, Check or Update MD5 files.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/md5.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

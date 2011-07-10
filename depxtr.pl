@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/depxtr.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 #
 # Extract a list of all files listed in a MSDEV-generated .dep file.

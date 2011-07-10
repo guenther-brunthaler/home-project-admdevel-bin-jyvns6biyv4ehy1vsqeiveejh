@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Explode "hex:"-entries in Windows .reg-Files into "file:"-entries
 # referring to decoded external files which will be created.
 # Can also be used to convert back the exploded format into the

@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # creates a checksum file for the current directory subtree.
 use strict;
 use File::Find;

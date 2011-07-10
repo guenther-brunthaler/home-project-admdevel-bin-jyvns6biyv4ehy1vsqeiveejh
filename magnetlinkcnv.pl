@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Convert between Azureus info hash and magnet link URL.
 # Written by Guenther Brunthaler.
 # $Id: /caches/xsvn/admdevel/trunk/prj/shared_bin_in_path_9wewpie7d5tawvtr9qf842c1z/magnetlinkcnv.pl 1020 2007-10-09T20:05:23.737461Z root  $

@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Replace common misspellings in 'SubRip' OCR-processed
 # '*.srt' subtitles files.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/srt_spellfix.pl 2647 2006-08-26T07:45:40.216781Z gb  $.

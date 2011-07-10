@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Input: A list of movie clip durations @ 25 fps, format [[HH:]MM:]SS:ff
 # Output: List of absolute offsets from beginning in same format.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/dur2sched.pl 2647 2006-08-26T07:45:40.216781Z gb  $

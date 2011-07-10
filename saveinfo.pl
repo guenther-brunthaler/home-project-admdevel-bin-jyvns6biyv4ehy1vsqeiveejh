@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Save Infos about argument files into database.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/saveinfo.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

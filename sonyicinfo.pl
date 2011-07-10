@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Extract relevant information from *.msv SONY IC Voice Recorder files.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/sonyicinfo.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

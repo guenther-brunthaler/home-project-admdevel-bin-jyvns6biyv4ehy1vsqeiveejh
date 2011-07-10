@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Rename .srt files in current directory from "XXX.srt"
 # into "Movie Name - XXX Subtitles.latin1.srt"
 # unless they end already in ".latin1.srt".

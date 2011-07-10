@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Extracts tagged subfiles from a binary data stream.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/subfile_extractor.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

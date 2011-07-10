@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Create a bunch of random files containing random bytes.
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/mkrndfiles.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 

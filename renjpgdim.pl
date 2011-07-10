@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # $Id: /trunk/Org/SysAdmin/Crossplatform/bin/renjpgdim.pl 2647 2006-08-26T07:45:40.216781Z gb  $
 # Create JPEG file hardlinks based on image dimensions.
 

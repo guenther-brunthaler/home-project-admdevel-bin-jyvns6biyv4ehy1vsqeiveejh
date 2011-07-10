@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Report the starting frame offset between a specified .d2v-file starting
 # at some frame and a prefix file of the same .d2v-source which starts at the
 # beginning and ends at an offset larger than the start of the first file.

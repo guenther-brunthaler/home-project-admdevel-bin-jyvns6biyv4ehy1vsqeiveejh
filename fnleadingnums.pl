@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Examine the filenames in the specified directory
 # and extract their leading numeric prefixes.
 # Then print a list of prefixes and/or prefix ranges.

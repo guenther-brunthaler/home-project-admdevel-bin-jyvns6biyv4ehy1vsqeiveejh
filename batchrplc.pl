@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 use strict;
 my $emulate= 0;
 # Array of replacements.

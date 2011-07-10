@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 # Interpolates the modification datestamps of a sequence of files
 # assuming that the sorted file name sequence actually refers to files
 # that should have datestamps in that order.
