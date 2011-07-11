@@ -22,11 +22,7 @@ sub istext {
  my(@buf, $bi, $bi2, $rd, $anything, $z);
  $bi= 0; $bi2= 1;
  while (($rd= read IN, $buf[$bi], 0x1000) != 0) {
-  unless (defined $rd) {
-   failed:
-   close IN;
-   return undef;
-  }
+  goto faileed unless defined $rd;
   $anything= 1;
   if ($^O eq 'MSWin32') {
    goto failed if $buf[$bi] =~ /[^\x20-\x7e\xa0-\xff\x0a\x0d\x09\x0c\x1a]/;
@@ -46,7 +42,10 @@ sub istext {
   }
  }
  close IN;
- $anything;
+ return $anything;
+ failed:
+ close IN;
+ return undef;
 }
 
 
