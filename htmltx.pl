@@ -126,6 +126,8 @@ sub decode_chars {
    $_[0]=~ s/&deg;/°/g;
    $_[0]=~ s/&sup3;/³/g;
    $_[0]=~ s/&sup2;/²/g;
+   $_[0]=~ s/&quot;/'/g;
+   $_[0]=~ s/&dquot;/"/g;
    $_[0]=~ s/&#(\d+);/ chr $1 /ge;
    die "unknown char encoding '$_[0]'" if $_[0] =~ /&.+;/;
 }
