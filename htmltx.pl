@@ -1,11 +1,4 @@
 #! /usr/bin/perl
-# $xsa1={FBF02760-95CF-11D3-BD96-0040C72500FD}$
-# $RCSfile$
-# $Revision: 2647 $
-# $Date: 2006-08-26T07:45:40.216781Z $
-# $Author: gb $
-# $State$
-# $xsa1$
 
 # HTML table extractor
 
@@ -131,6 +124,7 @@ sub decode_chars {
    $_[0]=~ s/&dquot;/"/g;
    $_[0]=~ s/&bull;/•/g;
    $_[0]=~ s/&hellip;/…/g;
+   $_[0]=~ s/copy;/©/g;
    $_[0]=~ s/&#(\d+);/ chr $1 /ge;
    die "unknown char encoding '$_[0]'" if $_[0] =~ /&.+;/;
 }
