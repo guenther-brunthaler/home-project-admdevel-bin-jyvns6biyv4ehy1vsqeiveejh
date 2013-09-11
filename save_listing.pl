@@ -1,12 +1,9 @@
-#!/usr/bin/perl
+#! /usr/bin/perl
 # Retrieve a listing of the files from some storage volume
 # rooted at a specified mount point and save a text file
 # containing the contents to a system-specific location.
 # If the file to be saved already exists,
 # it will be overwritten.
-# $Date: 2007-11-12T10:01:21.140264Z $
-# $Revision: 1030 $
-# $Author: root $
 
 
 # File format is a set of UTF-8 lines, "LC_ALL=C"-sorted by
@@ -60,8 +57,8 @@ sub dolm($) {
 
 
 sub emit_dir {
-   my($fh, $prefix, $dir, $recursions)= @_;
-   my(@e, $ad, $rf, $e, $size, $mtime);
+   my($fh, $prefix, $dir, $recursions, $label, $lmanual)= @_;
+   my(@e, $rlbl, $ad, $rf, $e, $size, $mtime);
    local *DIR;
    $ad= File::Spec->catdir($prefix, $dir);
    if (defined($recursions) && $recursions-- == 0) {
@@ -83,11 +80,20 @@ sub emit_dir {
    closedir DIR or die;
    foreach $e (sort @e) {
       $rf= $dir eq '' ? $e : File::Spec->catfile($dir, $e);
+      $rlbl= !$$lmanual && lc($e) eq 'label_6e6n2mx4wvxbr8g8er5pj74m0.nfo';
       $e= File::Spec->catfile($ad, $e);
       next if -l $e;
+      if ($rlbl && open LABEL, '<', $e) {
+         defined($rlbl= <LABEL>) or die $!;
+         close LABEL or die $!;
+         chomp $rlbl;
+         $rlbl gt '' or die;
+         $$label= $rlbl;
+         $$lmanual= 1;
+      }
       ($size, $mtime)= (stat _)[7, 9];
       if (-d _) {
-         &emit_dir($fh, $prefix, $rf, $recursions);
+         &emit_dir($fh, $prefix, $rf, $recursions, $label, $lmanual);
       } else {
          $rf =~ s/^(\s+)/ qstr $1 /e;
          $rf =~ s/(\s+)$/ qstr $1 /e;
@@ -98,7 +104,7 @@ sub emit_dir {
 }
 
 
-my($label, $vol, $dir, $file, $cmt, $recursions, $ann_mode, $in_vg);
+my($label, $vol, $dir, $file, $cmt, $recursions, $ann_mode, $in_vg, $lmanual);
 umask 0007;
 Getopt::Long::Configure("bundling");
 exit unless GetOptions(
@@ -113,7 +119,9 @@ exit unless GetOptions(
 );
 my $root= shift || die;
 die "'$root' does not exist" unless -d $root || -b $root;
-unless ($label) {
+if ($label) {
+   $lmanual= 1;
+} else {
    open MOUNT, '-|', "mount -l" or die $!;
    my($mp, $dev, $rootcmp);
    $rootcmp= qx(readlink -f "$root");
@@ -182,13 +190,18 @@ if ($ann_mode) {
       print OUT while <>;
    }
 } else {
-   $file= File::Spec->catfile($dir, $label . ".lst");
+   $file= File::Spec->catfile($dir, $label . ".lst.tmp");
    print "Creating listing file '$file'...\n";
    open OUT, '>', $file or die "Cannot create '$file': $!";
    print OUT $cmt;
-   emit_dir *OUT{IO}, $root, '', $recursions;
+   emit_dir *OUT{IO}, $root, '', $recursions, \$label, \$lmanual;
 }
 close OUT or die "Cannot finish writing '$file': $!";
+{
+   my $file2= File::Spec->catfile($dir, $label . ".lst");
+   print "Renaming into '$file2'!\n";
+   rename $file, $file2 or die "Cannot rename: $!";
+}
 {
    # Attempt to set same owner as for directory. Might fail.
    my($uid, $gid)= (stat $dir)[4, 5];
