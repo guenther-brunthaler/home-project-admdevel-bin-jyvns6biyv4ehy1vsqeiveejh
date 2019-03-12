@@ -4,6 +4,8 @@
 # containing the contents to a system-specific location.
 # If the file to be saved already exists,
 # it will be overwritten.
+#
+# Version 2019.71
 
 
 # File format is a set of UTF-8 lines, "LC_ALL=C"-sorted by
@@ -201,6 +203,7 @@ close OUT or die "Cannot finish writing '$file': $!";
    my $file2= File::Spec->catfile($dir, $label . ".lst");
    print "Renaming into '$file2'!\n";
    rename $file, $file2 or die "Cannot rename: $!";
+   $file= $file2;
 }
 {
    # Attempt to set same owner as for directory. Might fail.
