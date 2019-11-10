@@ -32,7 +32,7 @@
 # By convention, empty lines and lines starting with "#" shall be
 # used for comments.
 #
-# Version 2019.314
+# Version 2019.314.1
 #
 # Copyright (c) 2019 Guenther Brunthaler. All rights reserved.
 #
@@ -61,6 +61,30 @@ sub dolm($) {
       '%04u-%02u-%02u %02u:%02u:%02u'
       , $t[5] + 1900, $t[4] + 1, @t[3, 2, 1, 0]
    ;
+}
+
+sub summarize {
+   my($prefix, $dir, $size_ref)= @_;
+   my($rf, $ad, @e, $e);
+   local *DIR;
+   $ad= File::Spec->catdir($prefix, $dir);
+   unless (opendir DIR, $ad) {
+      die "Cannot read '$ad: $!";
+   }
+   while (defined($e= readdir DIR)) {
+      next unless File::Spec->no_upwards($e);
+      push @e, $e;
+   }
+   closedir DIR or die;
+   foreach $e (@e) {
+      $rf= $dir eq '' ? $e : File::Spec->catfile($dir, $e);
+      if (-l File::Spec->catfile($ad, $e)) {
+         $$size_ref+= (lstat _)[7];
+      } else {
+         $$size_ref+= (stat _)[7];
+      }
+      &summarize($prefix, $rf, $size_ref) if !-l _ && -d _;
+   }
 }
 
 sub emit_dir {
@@ -127,9 +151,13 @@ sub emit_dir {
       $rf= $dir eq '' ? $e : File::Spec->catfile($dir, $e);
       next if -l File::Spec->catfile($ad, $e);
       ($size, $mtime)= (stat _)[7, 9];
-      if (-d _) {
+      if (!${{qw/.git 1 .bzr 1/}}{$e} && -d _) {
          &emit_dir($fh, $prefix, $rf, $recursions, $ctx);
       } else {
+         if (-d _) {
+            $size= 0;
+            &summarize($prefix, $rf, \$size);
+         }
          $rf =~ s/^(\s+)/ qstr $1 /e;
          $rf =~ s/(\s+)$/ qstr $1 /e;
          $rf =~ s/([\s\\])/ $1 eq ' ' ? $1 : qstr $1 /eg;
