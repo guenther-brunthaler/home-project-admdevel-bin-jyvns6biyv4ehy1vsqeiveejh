@@ -32,7 +32,7 @@
 # By convention, empty lines and lines starting with "#" shall be
 # used for comments.
 #
-# Version 2019.314.1
+# Version 2019.314.2
 #
 # Copyright (c) 2019 Guenther Brunthaler. All rights reserved.
 #
@@ -150,10 +150,14 @@ sub emit_dir {
    foreach $e (@e) {
       $rf= $dir eq '' ? $e : File::Spec->catfile($dir, $e);
       next if -l File::Spec->catfile($ad, $e);
-      ($size, $mtime)= (stat _)[7, 9];
-      if (!${{qw/.git 1 .bzr 1/}}{$e} && -d _) {
+      if (
+         !${{qw/.git 1 .bzr 1/}}{
+            do {$size= $e; $size =~ s/.*\././; $size}
+         } && -d _
+      ) {
          &emit_dir($fh, $prefix, $rf, $recursions, $ctx);
       } else {
+         ($size, $mtime)= (stat _)[7, 9];
          if (-d _) {
             $size= 0;
             &summarize($prefix, $rf, \$size);
