@@ -1,51 +1,59 @@
 #! /usr/bin/perl
-# Retrieve a listing of the files from some storage volume
-# rooted at a specified mount point and save a text file
-# containing the contents to a system-specific location.
-# If the file to be saved already exists,
-# it will be overwritten.
 
+# Retrieve a listing of the files from some storage volume rooted
+# at a specified mount point and save a text file containing the
+# contents to a system-specific location. If the file to be saved
+# already exists, it will be overwritten.
 
 # File format is a set of UTF-8 lines, "LC_ALL=C"-sorted by
 # pathname.
+#
 # Each line has the format:
+#
 # DOLM BYTECOUNT PATHNAME
+#
 # where:
+#
 # DOLM: date of last modification, UTC, syntax:
 #       YYYY-MM-DD HH:NN:SS
+#
 # BYTECOUNT: file size in bytes, at least 13 decimal digits,
 # left-padded with spaces.
-# PATHNAME: Path separator is '/', special characters must
-# be escaped using \xNN reprentation. Special characters are
-# '/', leading or trailing WS, WS other than ASCII SPC,
-# and '\' which will be escaped as '\x5C'.
 #
-# Lines which are not confined to the syntax outlined above
-# will be assumed to be comments and shall be ignored
-# by processing tools.
+# PATHNAME: Path separator is '/', special characters must be
+# escaped using \xNN reprentation. Special characters are '/',
+# leading or trailing WS, WS other than ASCII SPC, and '\' which
+# will be escaped as '\x5C'.
 #
-# By convention, empty lines and lines starting with "#"
-# shall be used for comments.
-
+# Lines which are not confined to the syntax outlined above will
+# be assumed to be comments and shall be ignored by processing
+# tools.
+#
+# By convention, empty lines and lines starting with "#" shall be
+# used for comments.
+#
+# Version 2019.314
+#
+# Copyright (c) 2019 Guenther Brunthaler. All rights reserved.
+#
+# This script is free software.
+# Distribution is permitted under the terms of the GPLv3.
 
 use strict;
 use File::Spec;
 use Getopt::Long;
 
-
-# Preset directory where listings will be written to,
-# Relative to $HOME unless specified as an absolute path.
-# May be a symlink to the actual directory as well.
-# Can be overriden by command line option.
+# Preset directory where listings will be written to, Relative to
+# $HOME unless specified as an absolute path. May be a symlink to
+# the actual directory as well. Can be overriden by command line
+# option.
 our $listings_dir= '.offline_db';
-
 
 sub qstr($) {
    return join '', map {
       sprintf '\\x%02X', $_
    } unpack 'C*', shift;
 }
-
 
 sub dolm($) {
    my @t= gmtime shift;
@@ -55,12 +63,12 @@ sub dolm($) {
    ;
 }
 
-
 sub emit_dir {
-   my($fh, $prefix, $dir, $recursions, $label, $lmanual)= @_;
-   my(@e, $rlbl, $ad, $rf, $e, $size, $mtime);
+   my($fh, $prefix, $dir, $recursions, $ctx)= @_;
+   my(@e, $meta, $ad, $rf, $e, $size, $mtime);
    local *DIR;
    $ad= File::Spec->catdir($prefix, $dir);
+   return if $ctx->{exclusions}->{$ad};
    if (defined($recursions) && $recursions-- == 0) {
       $e= '.';
       $rf= $dir eq '' ? $e : File::Spec->catfile($dir, $e);
@@ -71,29 +79,56 @@ sub emit_dir {
    }
    unless (opendir DIR, $ad) {
       return if $dir eq 'lost+found';
-      die "Cannot read '$ad': $!";
+      die "Cannot read '$ad: $!";
    }
    while (defined($e= readdir DIR)) {
       next unless File::Spec->no_upwards($e);
       push @e, $e;
    }
    closedir DIR or die;
-   foreach $e (sort @e) {
-      $rf= $dir eq '' ? $e : File::Spec->catfile($dir, $e);
-      $rlbl= !$$lmanual && lc($e) eq 'label_6e6n2mx4wvxbr8g8er5pj74m0.nfo';
-      $e= File::Spec->catfile($ad, $e);
-      next if -l $e;
-      if ($rlbl && open LABEL, '<', $e) {
-         defined($rlbl= <LABEL>) or die $!;
+   @e= sort @e;
+   foreach $e (@e) {
+      $meta= ${{
+            'label_6e6n2mx4wvxbr8g8er5pj74m0.nfo' => 'L'
+         ,  'metadata_6e6n2mx4wvxbr8g8er5pj74m0.nfo' => 'M'
+      }}{lc $e} || '';
+      $rf= File::Spec->catfile($ad, $e);
+      if ($meta eq 'L' && !${$ctx->{lmanual_ref}} && open LABEL, '<', $rf) {
+         defined($meta= <LABEL>) or die $!;
          close LABEL or die $!;
-         chomp $rlbl;
-         $rlbl gt '' or die;
-         $$label= $rlbl;
-         $$lmanual= 1;
+         chomp $meta;
+         $meta gt '' or die;
+         ${$ctx->{label_ref}}= $meta;
+         ${$ctx->{lmanual_ref}}= 1;
+      } elsif ($meta eq 'M' && open META, '<', $rf) {
+         while (defined($meta= <META>)) {
+            chomp $meta;
+            next if $meta eq '' || $meta =~ /^#/;
+            if ($meta =~ /\s$/) {
+               die "No trailing whitespace in metadata value for '$meta'!";
+            }
+            if ($meta =~ s/^label\s*=\s*//) {
+               next if ${$ctx->{lmanual_ref}};
+               ${$ctx->{label_ref}}= $meta;
+               ${$ctx->{lmanual_ref}}= 1;
+            } elsif ($meta =~ s/^exclude\s*=\s*//) {
+               if ($meta =~ m!^/|/$|//!) {
+                  die "Bad relative path in exclusion!"
+               }
+               $ctx->{exclusions}->{$meta}= 1;
+            } else {
+               die "Unrecognized meta-directive '$meta' in '$e'!";
+            }
+         }
+         close META or die $!;
       }
+   }
+   foreach $e (@e) {
+      $rf= $dir eq '' ? $e : File::Spec->catfile($dir, $e);
+      next if -l File::Spec->catfile($ad, $e);
       ($size, $mtime)= (stat _)[7, 9];
       if (-d _) {
-         &emit_dir($fh, $prefix, $rf, $recursions, $label, $lmanual);
+         &emit_dir($fh, $prefix, $rf, $recursions, $ctx);
       } else {
          $rf =~ s/^(\s+)/ qstr $1 /e;
          $rf =~ s/(\s+)$/ qstr $1 /e;
@@ -102,7 +137,6 @@ sub emit_dir {
       }
    }
 }
-
 
 my($label, $vol, $dir, $file, $cmt, $recursions, $ann_mode, $in_vg, $lmanual);
 umask 0007;
@@ -194,7 +228,10 @@ if ($ann_mode) {
    print "Creating listing file '$file'...\n";
    open OUT, '>', $file or die "Cannot create '$file': $!";
    print OUT $cmt;
-   emit_dir *OUT{IO}, $root, '', $recursions, \$label, \$lmanual;
+   emit_dir
+         *OUT{IO}, $root, '', $recursions
+      ,  {label_ref => \$label, lmanual_ref => \$lmanual, exclusions => {}}
+   ;
 }
 close OUT or die "Cannot finish writing '$file': $!";
 {
