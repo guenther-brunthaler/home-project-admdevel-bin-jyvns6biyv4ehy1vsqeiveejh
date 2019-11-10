@@ -32,7 +32,7 @@
 # By convention, empty lines and lines starting with "#" shall be
 # used for comments.
 #
-# Version 2019.314.2
+# Version 2019.314.3
 #
 # Copyright (c) 2019 Guenther Brunthaler. All rights reserved.
 #
@@ -140,6 +140,11 @@ sub emit_dir {
                   die "Bad relative path in exclusion!"
                }
                $ctx->{exclusions}->{$meta}= 1;
+            } elsif ($meta =~ s/^summarize\s*=\s*//) {
+               if ($meta =~ m!^/|/$|//!) {
+                  die "Bad relative path in subtree path to summarize!"
+               }
+               $ctx->{summarize}->{$meta}= 1;
             } else {
                die "Unrecognized meta-directive '$meta' in '$e'!";
             }
@@ -153,7 +158,7 @@ sub emit_dir {
       if (
          !${{qw/.git 1 .bzr 1/}}{
             do {$size= $e; $size =~ s/.*\././; $size}
-         } && -d _
+         } && !$ctx->{summarize}->{$rf} && -d _
       ) {
          &emit_dir($fh, $prefix, $rf, $recursions, $ctx);
       } else {
@@ -262,7 +267,12 @@ if ($ann_mode) {
    print OUT $cmt;
    emit_dir
          *OUT{IO}, $root, '', $recursions
-      ,  {label_ref => \$label, lmanual_ref => \$lmanual, exclusions => {}}
+      ,  {
+            label_ref => \$label
+         ,  lmanual_ref => \$lmanual
+         ,  exclusions => {}
+         ,  summarize => {}
+      }
    ;
 }
 close OUT or die "Cannot finish writing '$file': $!";
