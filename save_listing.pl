@@ -32,7 +32,7 @@
 # By convention, empty lines and lines starting with "#" shall be
 # used for comments.
 #
-# Version 2019.314.3
+# Version 2019.325
 #
 # Copyright (c) 2019 Guenther Brunthaler. All rights reserved.
 #
@@ -166,6 +166,7 @@ sub emit_dir {
          if (-d _) {
             $size= 0;
             &summarize($prefix, $rf, \$size);
+            $rf.= "/";
          }
          $rf =~ s/^(\s+)/ qstr $1 /e;
          $rf =~ s/(\s+)$/ qstr $1 /e;
