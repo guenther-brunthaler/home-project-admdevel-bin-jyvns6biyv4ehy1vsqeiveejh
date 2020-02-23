@@ -281,6 +281,7 @@ close OUT or die "Cannot finish writing '$file': $!";
    my $file2= File::Spec->catfile($dir, $label . ".lst");
    print "Renaming into '$file2'!\n";
    rename $file, $file2 or die "Cannot rename: $!";
+   $file= $file2;
 }
 {
    # Attempt to set same owner as for directory. Might fail.
